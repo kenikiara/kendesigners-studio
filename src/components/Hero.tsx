@@ -1,12 +1,15 @@
 import CyclePill from "./CyclePill";
 
+// basePath is not applied to raw <video src> by Next, so prefix manually.
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 // Full-bleed cinematic video hero inside the rounded page frame.
 export default function Hero() {
   return (
     <section className="relative h-[92svh] min-h-[540px] overflow-hidden rounded-3xl">
       <video
         className="absolute inset-0 w-full h-full object-cover"
-        src="/media/hero.mp4"
+        src={`${basePath}/media/hero.mp4`}
         autoPlay
         muted
         loop
