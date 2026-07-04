@@ -6,9 +6,9 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 // Full-bleed cinematic video hero inside the rounded page frame.
 export default function Hero() {
   return (
-    <section className="relative h-[92svh] min-h-[540px] overflow-hidden rounded-3xl">
+    <section className="relative h-[88svh] min-h-[520px] md:h-[92svh] overflow-hidden rounded-3xl">
       <video
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover object-center"
         style={{ filter: "brightness(0.9) contrast(1.03) saturate(1.05)" }}
         src={`${basePath}/media/hero.mp4`}
         autoPlay
