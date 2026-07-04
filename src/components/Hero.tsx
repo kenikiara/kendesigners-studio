@@ -9,6 +9,7 @@ export default function Hero() {
     <section className="relative h-[92svh] min-h-[540px] overflow-hidden rounded-3xl">
       <video
         className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: "brightness(0.62) contrast(1.05) saturate(1.05)" }}
         src={`${basePath}/media/hero.mp4`}
         autoPlay
         muted
@@ -16,7 +17,16 @@ export default function Hero() {
         playsInline
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
+      {/* Fade the studio background into the site's exact black so it blends */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(130% 115% at 50% 42%, transparent 30%, rgba(3,3,3,0.72) 72%, #030303 100%)",
+        }}
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-[#030303]/40" />
 
       <div className="absolute inset-x-0 bottom-0 p-6 md:p-12 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
         <div>
