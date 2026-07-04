@@ -5,6 +5,7 @@ import PillNav from "@/components/PillNav";
 import Hero from "@/components/Hero";
 import Statement from "@/components/Statement";
 import WorkShowcase from "@/components/WorkShowcase";
+import TechStack from "@/components/TechStack";
 import ServicesPanel from "@/components/ServicesPanel";
 import Stats from "@/components/Stats";
 import StudioTeaser from "@/components/StudioTeaser";
@@ -24,6 +25,7 @@ export default function Home() {
       <main>
         <Hero />
         <Statement />
+        <TechStack />
         <WorkShowcase />
         <ServicesPanel />
         <Stats />
