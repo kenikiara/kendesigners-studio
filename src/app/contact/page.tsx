@@ -8,7 +8,8 @@ import ContactForm from "@/components/ContactForm";
 export const metadata: Metadata = {
   title: "Contact us",
   description:
-    "Start a project with Ken Designers. Call or WhatsApp +254 758 958 928, email ken@kendesigners.com, or send the brief through the form.",
+    "Start a project with Ken Designers. Call or WhatsApp +254 758 958 928, or send your brief. You will talk to Ken Murithi directly.",
+  alternates: { canonical: "/contact/" },
 };
 
 export default function Contact() {
@@ -22,15 +23,23 @@ export default function Contact() {
             Talk to us<span className="text-yellow">.</span>
           </h1>
           <div className="grid md:grid-cols-2 gap-6 md:gap-10 items-start">
-            <div className="gs-reveal relative rounded-3xl overflow-hidden bg-panel border border-white/5 aspect-square md:sticky md:top-24">
-              <Image
-                src="/media/faq-editorial.webp"
-                alt="Editorial red-toned portrait of a creative holding a monitor showing a shopping cart icon"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
-            </div>
+            <figure className="gs-reveal md:sticky md:top-24">
+              <div className="relative rounded-3xl overflow-hidden bg-panel border border-white/5 aspect-[4/5]">
+                <Image
+                  src="/studio/ken-suit.webp"
+                  alt="Ken Murithi, founder and lead developer of Ken Designers, in a black suit"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover object-top"
+                />
+                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/85 to-transparent">
+                  <p className="font-extrabold text-lg">Ken Murithi</p>
+                  <p className="text-sm text-white/70 font-semibold">
+                    Founder &amp; Lead Developer. You will talk to me directly.
+                  </p>
+                </div>
+              </div>
+            </figure>
             <div className="gs-reveal rounded-3xl bg-panel-2/50 border border-white/5 p-6 md:p-10">
               <ContactForm />
             </div>

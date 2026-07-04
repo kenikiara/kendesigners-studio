@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { projects } from "@/lib/projects";
+import { orderedProjects as projects } from "@/lib/projects";
 
-// Home showcase: first four projects, with a link to the full index.
+// Home showcase: newest four projects, with a link to the full index.
 export default function WorkShowcase() {
   return (
     <section id="work" className="max-w-7xl mx-auto px-4 md:px-6 py-24 md:py-32 scroll-mt-24">

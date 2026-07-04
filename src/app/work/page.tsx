@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Work",
   description:
     "Selected projects by Ken Designers: websites, online stores, booking platforms and portfolios built for the East African market.",
+  alternates: { canonical: "/work/" },
 };
 
 export default function WorkIndex() {

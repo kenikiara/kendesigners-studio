@@ -12,13 +12,23 @@ const serviceOptions = [
   "Branding",
 ];
 
-// No backend: submits as a pre-filled WhatsApp message.
+// No backend: submits as a pre-filled WhatsApp message that also records the
+// page the client browsed in from (the referrer), so Ken has context.
 export default function ContactForm() {
   const [form, setForm] = useState({ name: "", email: "", service: serviceOptions[0], message: "" });
 
-  const message = encodeURIComponent(
-    `Hi Ken Designers. I am ${form.name || "..."} (${form.email || "no email"}). Interested in: ${form.service}. ${form.message}`
-  );
+  const submit = () => {
+    const source =
+      typeof document !== "undefined" && document.referrer
+        ? document.referrer
+        : typeof window !== "undefined"
+          ? window.location.href
+          : site.url;
+    const text = encodeURIComponent(
+      `Hi Ken Designers. I am ${form.name || "..."} (${form.email || "no email"}). Interested in: ${form.service}. ${form.message} (Enquiry from: ${source})`
+    );
+    window.open(`${site.whatsapp}?text=${text}`, "_blank", "noopener");
+  };
 
   const field =
     "w-full rounded-2xl bg-panel border border-white/10 px-5 py-3.5 text-white placeholder:text-white/30 focus:border-blue focus:outline-none text-sm font-medium";
@@ -28,7 +38,7 @@ export default function ContactForm() {
       className="space-y-5"
       onSubmit={(e) => {
         e.preventDefault();
-        window.open(`${site.whatsapp}?text=${message}`, "_blank");
+        submit();
       }}
     >
       <div>

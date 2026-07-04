@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import GsapEffects from "@/components/GsapEffects";
 import JsonLd from "@/components/JsonLd";
 import PillNav from "@/components/PillNav";
@@ -9,6 +10,10 @@ import Stats from "@/components/Stats";
 import StudioTeaser from "@/components/StudioTeaser";
 import Faq from "@/components/Faq";
 import BigFooter from "@/components/BigFooter";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (

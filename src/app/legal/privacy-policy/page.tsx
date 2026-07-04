@@ -7,6 +7,7 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How Ken Designers handles the information you share with us.",
+  alternates: { canonical: "/legal/privacy-policy/" },
 };
 
 export default function Privacy() {

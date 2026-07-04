@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
+import WhatsAppButton from "./WhatsAppButton";
 
 const links = [
-  { href: "/about/", label: "Studio" },
-  { href: "/work/", label: "Work", sup: "07" },
+  { href: "/work/", label: "Work", sup: "12" },
   { href: "/services/", label: "Services" },
+  { href: "/achievements/", label: "Awards" },
+  { href: "/articles/", label: "Articles" },
+  { href: "/about/", label: "Studio" },
 ];
 
 // Floating pill nav, strove-style: full pill at the top of the page,
@@ -109,13 +112,9 @@ export default function PillNav() {
           >
             Talk to us
           </Link>
-          <a
-            href={site.whatsapp}
-            rel="noopener"
-            className="text-sm font-bold text-white/60"
-          >
+          <WhatsAppButton className="text-sm font-bold text-white/60">
             WhatsApp {site.phoneDisplay}
-          </a>
+          </WhatsAppButton>
         </div>
       )}
     </div>

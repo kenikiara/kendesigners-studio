@@ -2,14 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 const words = ["a website?", "an online store?", "a brand?", "M-Pesa payments?", "SEO that works?"];
 
-// Cycling CTA pill: "Need <word> — Talk to us", typewriter style.
+// Cycling CTA pill: "Need <word> Talk to us", typewriter style. The link goes
+// to WhatsApp with a message pre-filled for whatever page it sits on.
 export default function CyclePill({ align = "left" }: { align?: "left" | "center" }) {
   const [i, setI] = useState(0);
   const [text, setText] = useState(words[0]);
   const [reduce, setReduce] = useState(false);
+  const [href, setHref] = useState(site.whatsapp);
+
+  useEffect(() => {
+    setHref(buildWhatsAppHref());
+  }, []);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -37,8 +44,13 @@ export default function CyclePill({ align = "left" }: { align?: "left" | "center
   return (
     <div className={`flex ${align === "center" ? "justify-center" : "justify-start"}`}>
       <a
-        href={site.whatsapp}
+        href={href}
         rel="noopener"
+        target="_blank"
+        onClick={(e) => {
+          e.preventDefault();
+          window.open(buildWhatsAppHref(), "_blank", "noopener");
+        }}
         className="group inline-flex items-center gap-3 rounded-full bg-blue pl-5 pr-1.5 py-1.5 shadow-[0_0_40px_rgba(0,111,255,0.35)] ring-2 ring-white/20 hover:ring-white/50 transition-all"
         aria-label={`Need ${words[i]} Talk to us on WhatsApp`}
       >

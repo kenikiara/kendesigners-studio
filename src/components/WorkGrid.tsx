@@ -3,13 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { projects } from "@/lib/projects";
+import { orderedProjects as projects } from "@/lib/projects";
 
 const filters = [
   { label: "All", match: () => true },
   { label: "Ecommerce", match: (s: string) => s.includes("Ecommerce") || s.includes("Commerce") },
   { label: "Travel", match: (s: string) => s.includes("Travel") },
   { label: "Real Estate", match: (s: string) => s.includes("Real Estate") },
+  { label: "Education", match: (s: string) => s.includes("Education") },
   { label: "Portfolio", match: (s: string) => s.includes("Portfolio") },
 ];
 

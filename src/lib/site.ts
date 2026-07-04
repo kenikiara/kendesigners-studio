@@ -1,7 +1,7 @@
 export const site = {
   name: "Ken Designers",
   tagline: "Ecommerce that generates real customers",
-  url: "https://kenikiara.github.io/kendesigners-studio",
+  url: "https://kendesigners.com",
   phone: "+254758958928",
   phoneDisplay: "+254 758 958 928",
   email: "ken@kendesigners.com",
@@ -32,6 +32,38 @@ export const awards = [
     title: "Best Use of AI for E-Commerce",
     org: "Vibrant Digital Africa Awards",
     status: "Nominated",
+  },
+];
+
+export const achievementGallery = [
+  {
+    src: "/studio/award-best-developer.webp",
+    title: "Best E-Commerce Website Developer of the Year",
+    caption:
+      "Ken Murithi accepting the top developer award at the Kenya Ecommerce Awards.",
+    alt: "Ken Murithi holding the Best E-Commerce Website Developer of the Year trophy at the Kenya Ecommerce Awards",
+    feature: true,
+  },
+  {
+    src: "/studio/award-best-agency.webp",
+    title: "Best E-Commerce Agency",
+    caption: "Receiving the Best E-Commerce Agency award on stage.",
+    alt: "Ken Designers receiving the Best E-Commerce Agency award on stage",
+    feature: false,
+  },
+  {
+    src: "/studio/award-celebration.webp",
+    title: "Award night",
+    caption: "Celebrating the win with the people who make the work possible.",
+    alt: "Ken Designers award celebration at the Kenya Ecommerce Awards ceremony",
+    feature: false,
+  },
+  {
+    src: "/studio/gala-dinner.webp",
+    title: "Awards gala dinner",
+    caption: "At the awards gala dinner in Nairobi.",
+    alt: "Ken Murithi at the Kenya Ecommerce Awards gala dinner in Nairobi",
+    feature: false,
   },
 ];
 

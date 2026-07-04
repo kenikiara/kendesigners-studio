@@ -4,6 +4,7 @@
   sector: string;
   year: string;
   summary: string;
+  metaDescription?: string;
   description: string[];
   role: string;
   stack: string[];
@@ -175,8 +176,133 @@ export const projects: Project[] = [
     ],
     accent: "#c19a49",
   },
+  {
+    slug: "blue-lilac",
+    name: "Blue Lilac Tours",
+    year: "2025",
+    sector: "Travel + Booking",
+    summary:
+      "A booking site for a premier East African safari specialist covering Kenya, Tanzania, Uganda and Rwanda, with per-person tour pricing and a Tripadvisor Travellers' Choice badge.",
+    metaDescription:
+      "Booking site for a premier East African safari specialist, with per-person tour pricing across Kenya, Tanzania, Uganda and Rwanda.",
+    description: [
+      "Blue Lilac Tours & Travel designs luxury safaris across East Africa, from the Maasai Mara to the beaches of Zanzibar. International travellers research for weeks before they commit, so the site leads with best-selling tours, transparent per-person pricing and social proof from real reviews.",
+      "We built the catalogue around tours and destinations, each with duration, country and starting price surfaced at card level, and routed enquiries to a fast WhatsApp and call flow. The design leans into wildlife imagery without slowing the page down on mobile networks.",
+    ],
+    role: "Design, development, booking enquiry flow",
+    stack: ["WordPress", "Custom PHP", "SEO Architecture"],
+    images: [
+      {
+        src: "/work/blue-lilac.webp",
+        alt: "Blue Lilac Tours safari website with a lion cub hero image, best-selling East Africa tours and per-person pricing from 2,150 US dollars",
+      },
+    ],
+    accent: "#2f6bd6",
+  },
+  {
+    slug: "stonecrest",
+    name: "Stonecrest Real Estate",
+    year: "2025",
+    sector: "Real Estate",
+    summary:
+      "A property platform for a Nairobi and Zanzibar real estate firm, with searchable listings, per-property enquiry buttons and a full agency service breakdown.",
+    description: [
+      "Stonecrest Real Estate sells and markets property across Kenya and Zanzibar, from Kilimani apartments to beachfront exclusives. Buyers are often international, so the site had to build trust fast with professional photography, clear starting prices and direct contact on every listing.",
+      "We built a searchable listings engine with city and keyword filtering, per-property Call, Email and WhatsApp buttons, and a neighbourhood explorer covering Zanzibar, Fumba, Kilimani, Westlands, Paje and Diani. Agency services from valuation to legal support are laid out plainly.",
+    ],
+    role: "Listings platform design and development",
+    stack: ["WordPress", "Custom PHP", "MySQL"],
+    images: [
+      {
+        src: "/work/stonecrest.webp",
+        alt: "Stonecrest Real Estate website with a modern villa hero, featured exclusive properties in Nairobi and Zanzibar and starting prices in US dollars",
+      },
+    ],
+    accent: "#2e6b3e",
+  },
+  {
+    slug: "excavator-truck-master",
+    name: "Excavator Truck Master",
+    year: "2025",
+    sector: "Industrial Ecommerce",
+    summary:
+      "An online store for a heavy-machinery dealer selling inspected used excavators, trucks and equipment across Kenya, with category browsing and a documented buying process.",
+    metaDescription:
+      "Online store for a heavy-machinery dealer selling inspected used excavators, trucks and equipment across Kenya.",
+    description: [
+      "Excavator Truck Master supplies inspected second-hand industrial and construction machinery. Buying used heavy equipment is a high-value, high-risk decision, so the store leads with inspection guarantees, condition reports and transparent USD pricing on every machine.",
+      "We built the catalogue around equipment categories from earth-moving to trucks and agricultural machines, with featured listings, location tags and a six-step buying process covering inspection, secure payment, shipping and customs. The bold yellow-and-black system signals heavy industry without feeling cheap.",
+    ],
+    role: "Store design, development, buying-process flow",
+    stack: ["WordPress", "WooCommerce", "Custom PHP"],
+    images: [
+      {
+        src: "/work/excavator-truck-master.webp",
+        alt: "Excavator Truck Master heavy machinery store with a Volvo excavator hero, equipment categories and used machines priced in US dollars",
+      },
+    ],
+    accent: "#f0a91e",
+  },
+  {
+    slug: "sheflavours",
+    name: "SheFlavours",
+    year: "2025",
+    sector: "Food Ecommerce",
+    summary:
+      "A wholesome-food and catering store for an Australian brand, selling honey, granola and protein products alongside bookable catering, with a TikTok-driven brand feel.",
+    metaDescription:
+      "Wholesome-food and catering store for an Australian brand, selling honey, granola and protein products with bookable catering.",
+    description: [
+      "SheFlavours makes natural food products and runs a catering service. The brand needed warmth and appetite appeal without losing the credibility that health-conscious buyers expect, so the store leads with clean product photography, natural-ingredient badges and a soft green-and-cream system.",
+      "We built the WooCommerce catalogue for both packaged products and bookable catering packages, wired an embedded TikTok feed for social proof, and structured the gallery and catering flows so a customer can shop honey or book a parfait bar in the same visit.",
+    ],
+    role: "Brand-led store design, development, catering flow",
+    stack: ["WordPress", "WooCommerce", "Custom PHP"],
+    images: [
+      {
+        src: "/work/sheflavours.webp",
+        alt: "SheFlavours wholesome food store with honey and granola products, a catering section and an embedded TikTok feed",
+      },
+    ],
+    accent: "#5a6b3a",
+  },
+  {
+    slug: "ruth-jackson",
+    name: "Ruth Jackson AI Coach",
+    year: "2025",
+    sector: "Education Platform",
+    summary:
+      "A course platform for a Microsoft-certified AI coach, selling self-paced $79 certificate programs with lifetime access and an enrolled-learner dashboard.",
+    description: [
+      "Ruth Wanjohi, known as Ruth Jackson, is a certified Lead Trainer with Women in Digital Business who teaches AI and digital skills to entrepreneurs. The platform needed to make technology feel simple and immediately useful, and turn interested visitors into enrolled learners in minutes.",
+      "We designed a confident navy-and-gold learning platform with a certificate-program catalogue, a clear four-step enrolment flow, learner testimonials and a private dashboard concept. The credentials that build trust, from Microsoft certification to ITC-ILO training, are shown up front.",
+    ],
+    role: "Platform design, development, enrolment flow",
+    stack: ["WordPress", "Custom PHP", "AI Integration"],
+    images: [
+      {
+        src: "/work/ruth-jackson.webp",
+        alt: "Ruth Jackson AI Coach course platform in navy and gold, with self-paced 79 dollar certificate programs and a customer service excellence section",
+      },
+    ],
+    accent: "#d4a537",
+  },
 ];
 
 export function getProject(slug: string) {
   return projects.find((p) => p.slug === slug);
 }
+
+// The most recent projects lead on the home showcase and the work index.
+const RECENT = [
+  "blue-lilac",
+  "stonecrest",
+  "excavator-truck-master",
+  "sheflavours",
+  "ruth-jackson",
+];
+
+export const orderedProjects: Project[] = [
+  ...RECENT.map((slug) => projects.find((p) => p.slug === slug)!),
+  ...projects.filter((p) => !RECENT.includes(p.slug)),
+];

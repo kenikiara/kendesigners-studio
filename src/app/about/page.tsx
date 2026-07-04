@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "About the studio",
   description:
     "Ken Designers is an independent web design and development studio in Nairobi, led by Ken Murithi, winner of Best E-Commerce Website Developer of the Year.",
+  alternates: { canonical: "/about/" },
 };
 
 export default function About() {

@@ -15,9 +15,11 @@ export default function BigFooter() {
           aria-label="Footer"
           className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm font-bold text-white/80"
         >
-          <Link href="/about/" className="hover:text-white">Studio</Link>
           <Link href="/work/" className="hover:text-white">Work</Link>
           <Link href="/services/" className="hover:text-white">Services</Link>
+          <Link href="/achievements/" className="hover:text-white">Achievements</Link>
+          <Link href="/articles/" className="hover:text-white">Articles</Link>
+          <Link href="/about/" className="hover:text-white">Studio</Link>
           <Link href="/contact/" className="hover:text-white">Contact</Link>
           <a href={site.tiktok} rel="noopener" className="hover:text-white">TikTok</a>
         </nav>

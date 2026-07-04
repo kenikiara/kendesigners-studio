@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import GsapEffects from "@/components/GsapEffects";
 import PillNav from "@/components/PillNav";
 import BigFooter from "@/components/BigFooter";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { projects, getProject } from "@/lib/projects";
 import { site } from "@/lib/site";
 
@@ -20,8 +21,9 @@ export async function generateMetadata({
   const project = getProject((await params).slug);
   if (!project) return {};
   return {
-    title: `${project.name} — ${project.sector} case study`,
-    description: project.summary,
+    title: `${project.name} — ${project.sector}`,
+    description: project.metaDescription ?? project.summary,
+    alternates: { canonical: `/work/${project.slug}/` },
     openGraph: {
       title: `${project.name} | Ken Designers`,
       description: project.summary,
@@ -135,12 +137,12 @@ export default async function CaseStudy({
             >
               ← All work
             </Link>
-            <Link
-              href="/contact/"
+            <WhatsAppButton
+              intent={`a project like ${project.name}`}
               className="px-6 py-3 rounded-full bg-blue font-bold text-sm hover:bg-violet transition-colors"
             >
               Build something like this
-            </Link>
+            </WhatsAppButton>
           </div>
         </article>
       </main>

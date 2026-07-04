@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Services",
   description:
     "Web design, online stores, SEO, custom software and AI integration for East African businesses, from brand identity to the platform that runs your business.",
+  alternates: { canonical: "/services/" },
 };
 
 export default function Services() {
