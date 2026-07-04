@@ -50,11 +50,7 @@ export const projects: Project[] = [
     images: [
       {
         src: "/work/good-morning-babyshop.webp",
-        alt: "Good Morning Babyshop online store homepage with pastel branding, category circles and best-seller products priced in KSh",
-      },
-      {
-        src: "/work/good-morning-babyshop-2.webp",
-        alt: "Secondary view of the Good Morning Babyshop storefront design",
+        alt: "Good Morning Baby Shop online store homepage with pink and navy branding, a smiling baby hero, category circles and best-seller products priced in KSh",
       },
     ],
     accent: "#e07a9b",
@@ -98,10 +94,6 @@ export const projects: Project[] = [
         src: "/work/huwii-events.webp",
         alt: "Huwii Events homepage with orange and black branding, team building services and a games catalogue showing hire and sale prices in KSh",
       },
-      {
-        src: "/work/huwii-events-2.webp",
-        alt: "Alternate design view of the Huwii Events website",
-      },
     ],
     accent: "#e0641f",
   },
@@ -123,10 +115,6 @@ export const projects: Project[] = [
         src: "/work/sense-of-adventure.webp",
         alt: "Sense of Adventure Kenya safari website with Kilimanjaro hero image, destination cards and safari packages priced from KES 28,000",
       },
-      {
-        src: "/work/sense-of-adventure-2.webp",
-        alt: "Alternate view of the Sense of Adventure safari website design",
-      },
     ],
     accent: "#2e6b3e",
   },
@@ -147,10 +135,6 @@ export const projects: Project[] = [
       {
         src: "/work/landplan.webp",
         alt: "LandPlan property website homepage with land listings showing acreage, location, KSh prices and ready title deed badges",
-      },
-      {
-        src: "/work/landplan-2.webp",
-        alt: "Alternate view of the LandPlan land and property website",
       },
     ],
     accent: "#3e7d4e",

@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import GsapEffects from "@/components/GsapEffects";
 import PillNav from "@/components/PillNav";
 import BigFooter from "@/components/BigFooter";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import ArticleCover from "@/components/ArticleCover";
 import { articles, getArticle } from "@/lib/articles";
 import { site } from "@/lib/site";
+
+// Articles use generated cover graphics on-page; social/structured-data
+// previews use this branded default image.
+const OG_IMAGE = "/studio/award-best-developer.webp";
 
 export function generateStaticParams() {
   return articles.map((a) => ({ slug: a.slug }));
@@ -28,7 +32,7 @@ export async function generateMetadata({
       type: "article",
       title: article.title,
       description: article.description,
-      images: [article.cover.src],
+      images: [OG_IMAGE],
       publishedTime: article.date,
     },
   };
@@ -47,7 +51,7 @@ export default async function ArticlePage({
     "@type": "Article",
     headline: article.title,
     description: article.description,
-    image: `${site.url}${article.cover.src}`,
+    image: `${site.url}${OG_IMAGE}`,
     datePublished: article.date,
     dateModified: article.date,
     author: { "@type": "Person", name: site.founder },
@@ -85,13 +89,9 @@ export default async function ArticlePage({
 
           <figure className="rounded-3xl overflow-hidden border border-white/5 mb-10">
             <div className="relative aspect-[16/9]">
-              <Image
-                src={article.cover.src}
-                alt={article.cover.alt}
-                fill
-                sizes="(max-width: 768px) 100vw, 768px"
-                className="object-cover object-top"
-                priority
+              <ArticleCover
+                category={article.category}
+                className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
           </figure>
@@ -141,13 +141,9 @@ export default async function ArticlePage({
                 className="group rounded-3xl bg-panel border border-white/5 overflow-hidden"
               >
                 <div className="relative aspect-[16/9] overflow-hidden">
-                  <Image
-                    src={a.cover.src}
-                    alt={a.cover.alt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover object-top group-hover:scale-[1.03] transition-transform duration-700"
-                    loading="lazy"
+                  <ArticleCover
+                    category={a.category}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                   />
                 </div>
                 <div className="p-6">

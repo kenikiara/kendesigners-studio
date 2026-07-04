@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import GsapEffects from "@/components/GsapEffects";
 import PillNav from "@/components/PillNav";
 import BigFooter from "@/components/BigFooter";
+import ArticleCover from "@/components/ArticleCover";
 import { articles } from "@/lib/articles";
 
 export const metadata: Metadata = {
@@ -39,13 +39,9 @@ export default function Articles() {
             className="gs-reveal group grid md:grid-cols-2 gap-6 md:gap-10 items-center mb-16 rounded-3xl bg-panel border border-white/5 overflow-hidden"
           >
             <div className="relative aspect-[16/10] md:aspect-auto md:h-full min-h-64 overflow-hidden">
-              <Image
-                src={lead.cover.src}
-                alt={lead.cover.alt}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover object-top group-hover:scale-[1.03] transition-transform duration-700"
-                loading="lazy"
+              <ArticleCover
+                category={lead.category}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
               />
             </div>
             <div className="p-6 md:p-10">
@@ -71,13 +67,9 @@ export default function Articles() {
                 className="gs-reveal group rounded-3xl bg-panel border border-white/5 overflow-hidden"
               >
                 <div className="relative aspect-[16/10] overflow-hidden">
-                  <Image
-                    src={a.cover.src}
-                    alt={a.cover.alt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover object-top group-hover:scale-[1.03] transition-transform duration-700"
-                    loading="lazy"
+                  <ArticleCover
+                    category={a.category}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                   />
                 </div>
                 <div className="p-6">
