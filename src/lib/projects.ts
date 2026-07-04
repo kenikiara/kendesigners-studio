@@ -2,6 +2,7 @@
   slug: string;
   name: string;
   sector: string;
+  year: string;
   summary: string;
   description: string[];
   role: string;
@@ -14,6 +15,7 @@ export const projects: Project[] = [
   {
     slug: "jinsoko",
     name: "Jinsoko",
+    year: "2025",
     sector: "Wholesale Ecommerce",
     summary:
       "A wholesale footwear platform serving over 1,000 retailers across Kenya, with bulk pricing, minimum-order logic and KES-native checkout.",
@@ -34,6 +36,7 @@ export const projects: Project[] = [
   {
     slug: "good-morning-babyshop",
     name: "Good Morning Babyshop",
+    year: "2025",
     sector: "Retail Ecommerce",
     summary:
       "A Nairobi baby store trusted by over 1,000 parents, with M-Pesa at checkout and a catalogue spanning eight product categories.",
@@ -58,6 +61,7 @@ export const projects: Project[] = [
   {
     slug: "sabin-smarthub",
     name: "Sabin SmartHub",
+    year: "2025",
     sector: "Electronics Ecommerce",
     summary:
       "An electronics retailer in Chuka selling phones, laptops and accessories countrywide, with Lipa na M-Pesa and same-day town delivery.",
@@ -78,6 +82,7 @@ export const projects: Project[] = [
   {
     slug: "huwii-events",
     name: "Huwii Events",
+    year: "2024",
     sector: "Events + Commerce",
     summary:
       "An events company covering 47 counties, with a WooCommerce catalogue where team-building games are listed for both hire and sale.",
@@ -102,6 +107,7 @@ export const projects: Project[] = [
   {
     slug: "sense-of-adventure",
     name: "Sense of Adventure",
+    year: "2024",
     sector: "Travel + Booking",
     summary:
       "A safari operator's booking site covering Kenya and East Africa, with itinerary packages priced in KES and a 4.9-star Tripadvisor record front and centre.",
@@ -126,6 +132,7 @@ export const projects: Project[] = [
   {
     slug: "landplan",
     name: "LandPlan",
+    year: "2024",
     sector: "Real Estate",
     summary:
       "A land and property company with 5,000 clients, listing verified plots with title-deed status and prices from KSh 650,000.",
@@ -150,6 +157,7 @@ export const projects: Project[] = [
   {
     slug: "jesse-architect",
     name: "Jesse Architect",
+    year: "2024",
     sector: "Portfolio",
     summary:
       "A portfolio for a registered architect with 50 completed projects, built to convert enquiries for residential and commercial work.",

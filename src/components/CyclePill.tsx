@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
 
-const words = ["an online store?", "a brand?", "M-Pesa payments?", "a faster site?", "SEO that works?"];
+const words = ["a website?", "an online store?", "a brand?", "M-Pesa payments?", "SEO that works?"];
 
 // Cycling CTA pill: "Need <word> — Talk to us", typewriter style.
 export default function CyclePill({ align = "left" }: { align?: "left" | "center" }) {

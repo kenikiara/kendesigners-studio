@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { projects } from "@/lib/projects";
 
+// Home showcase: first four projects, with a link to the full index.
 export default function WorkShowcase() {
   return (
     <section id="work" className="max-w-7xl mx-auto px-4 md:px-6 py-24 md:py-32 scroll-mt-24">
@@ -15,7 +16,7 @@ export default function WorkShowcase() {
       </p>
 
       <div className="mt-14 md:mt-20 grid md:grid-cols-2 gap-4 md:gap-6">
-        {projects.map((p, i) => (
+        {projects.slice(0, 4).map((p, i) => (
           <Link
             key={p.slug}
             href={`/work/${p.slug}/`}
@@ -49,6 +50,14 @@ export default function WorkShowcase() {
             </div>
           </Link>
         ))}
+      </div>
+      <div className="gs-reveal mt-10 flex justify-center">
+        <Link
+          href="/work/"
+          className="px-7 py-3.5 rounded-full bg-white text-black font-extrabold text-sm hover:bg-yellow transition-colors"
+        >
+          View all projects ({projects.length})
+        </Link>
       </div>
     </section>
   );

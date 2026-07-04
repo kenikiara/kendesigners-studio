@@ -6,6 +6,7 @@ import Statement from "@/components/Statement";
 import WorkShowcase from "@/components/WorkShowcase";
 import ServicesPanel from "@/components/ServicesPanel";
 import Stats from "@/components/Stats";
+import StudioTeaser from "@/components/StudioTeaser";
 import Faq from "@/components/Faq";
 import BigFooter from "@/components/BigFooter";
 
@@ -21,6 +22,7 @@ export default function Home() {
         <WorkShowcase />
         <ServicesPanel />
         <Stats />
+        <StudioTeaser />
         <Faq />
       </main>
       <BigFooter />

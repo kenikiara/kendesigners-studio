@@ -7,10 +7,10 @@ export default function Statement() {
         ( Studio )
       </p>
       <p className="gs-reveal text-center text-2xl md:text-4xl font-semibold leading-snug tracking-tight max-w-4xl mx-auto">
-        At Ken Designers we believe selling online in Kenya should not be
-        complicated. We are a studio specialised in East African commerce. We
-        design, build and run digital platforms that generate real customers,
-        not just likes.
+        At Ken Designers we believe getting your business online should not be
+        complicated. We design, build and run websites for the East African
+        market: brand sites, booking platforms, portfolios and the online
+        stores we win awards for. Real customers, not just likes.
       </p>
 
       <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">

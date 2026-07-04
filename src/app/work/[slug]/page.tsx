@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import GsapEffects from "@/components/GsapEffects";
 import PillNav from "@/components/PillNav";
 import BigFooter from "@/components/BigFooter";
 import { projects, getProject } from "@/lib/projects";
@@ -49,48 +50,43 @@ export default async function CaseStudy({
 
   return (
     <div className="p-2 md:p-3">
+      <GsapEffects />
       <PillNav />
-      <main className="pt-24">
+      <main className="pt-32 md:pt-44">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <article className="max-w-5xl mx-auto px-4 md:px-6 py-10 md:py-16">
-          <p className="text-xs font-bold tracking-widest uppercase text-muted mb-4">
-            ( Case study · {project.sector} )
-          </p>
-          <h1 className="display text-5xl sm:text-6xl md:text-8xl">
-            {project.name}
-            <span className="text-blue">.</span>
-          </h1>
-          <p className="mt-6 text-lg md:text-xl text-white/70 font-medium leading-relaxed max-w-3xl">
-            {project.summary}
-          </p>
-
-          <dl className="grid sm:grid-cols-2 gap-4 my-10">
-            <div className="rounded-2xl bg-panel border border-white/5 p-6">
-              <dt className="text-xs font-bold tracking-widest uppercase text-muted mb-2">
-                Role
-              </dt>
-              <dd className="font-semibold text-sm">{project.role}</dd>
-            </div>
-            <div className="rounded-2xl bg-panel border border-white/5 p-6">
-              <dt className="text-xs font-bold tracking-widest uppercase text-muted mb-2">
-                Stack
-              </dt>
-              <dd className="font-semibold text-sm">{project.stack.join(" · ")}</dd>
-            </div>
-          </dl>
-
-          <div className="space-y-5 text-base md:text-lg text-white/70 leading-relaxed max-w-3xl mb-14">
-            {project.description.map((para) => (
-              <p key={para.slice(0, 32)}>{para}</p>
-            ))}
-          </div>
+        <article className="max-w-5xl mx-auto px-4 md:px-6 pb-24">
+          {/* Centered project intro, strove project-detail style */}
+          <header className="text-center max-w-3xl mx-auto mb-14">
+            <h1
+              className="gs-reveal display text-6xl sm:text-7xl md:text-9xl bg-gradient-to-b from-white to-white/30 bg-clip-text text-transparent"
+            >
+              {project.name}
+            </h1>
+            <p className="gs-reveal mt-8 text-lg md:text-xl font-bold leading-relaxed">
+              {project.summary}
+            </p>
+            <dl className="gs-reveal mt-10 flex flex-wrap justify-center gap-x-10 gap-y-6">
+              {[
+                ["Service", project.sector],
+                ["Client", project.name],
+                ["Year", project.year],
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <dt className="text-xs font-bold text-white/50 mb-2">{label}</dt>
+                  <dd className="inline-block px-4 py-1.5 rounded-full bg-white text-black text-sm font-extrabold">
+                    {value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </header>
 
           <div className="space-y-6">
             {project.images.map((img) => (
-              <figure key={img.src} className="rounded-3xl overflow-hidden border border-white/5">
+              <figure key={img.src} className="gs-reveal rounded-3xl overflow-hidden border border-white/5">
                 <Image
                   src={img.src}
                   alt={img.alt}
@@ -103,20 +99,48 @@ export default async function CaseStudy({
             ))}
           </div>
 
-          <div className="mt-14 flex flex-wrap gap-3">
+          <div className="mt-16 grid md:grid-cols-2 gap-10">
+            <div>
+              <p className="text-xs font-bold tracking-widest uppercase text-muted mb-4">
+                ( The work )
+              </p>
+              <div className="space-y-5 text-white/70 leading-relaxed">
+                {project.description.map((para) => (
+                  <p key={para.slice(0, 32)} className="gs-reveal">{para}</p>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-bold tracking-widest uppercase text-muted mb-4">
+                ( Role + stack )
+              </p>
+              <p className="gs-reveal text-white/70 mb-4">{project.role}</p>
+              <ul className="flex flex-wrap gap-2">
+                {project.stack.map((s) => (
+                  <li
+                    key={s}
+                    className="gs-reveal px-4 py-1.5 rounded-full bg-panel border border-white/10 text-xs font-bold text-white/70"
+                  >
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-16 flex flex-wrap gap-3">
             <Link
-              href="/#work"
+              href="/work/"
               className="px-6 py-3 rounded-full bg-panel border border-white/10 font-bold text-sm hover:border-white/30 transition-colors"
             >
               ← All work
             </Link>
-            <a
-              href={site.whatsapp}
-              rel="noopener"
+            <Link
+              href="/contact/"
               className="px-6 py-3 rounded-full bg-blue font-bold text-sm hover:bg-violet transition-colors"
             >
               Build something like this
-            </a>
+            </Link>
           </div>
         </article>
       </main>

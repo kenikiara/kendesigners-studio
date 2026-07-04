@@ -5,10 +5,9 @@ import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
 
 const links = [
-  { href: "/#studio", label: "Studio" },
-  { href: "/#work", label: "Work", sup: "07" },
-  { href: "/#services", label: "Services" },
-  { href: "/#faq", label: "FAQ" },
+  { href: "/about/", label: "Studio" },
+  { href: "/work/", label: "Work", sup: "07" },
+  { href: "/services/", label: "Services" },
 ];
 
 // Floating pill nav, strove-style: full pill at the top of the page,
@@ -72,13 +71,12 @@ export default function PillNav() {
           </button>
         )}
 
-        <a
-          href={site.whatsapp}
-          rel="noopener"
+        <Link
+          href="/contact/"
           className="hidden md:inline-block ml-1 px-4 py-2 rounded-full bg-violet text-white text-sm font-bold hover:bg-blue transition-colors whitespace-nowrap"
         >
           Talk to us
-        </a>
+        </Link>
 
         <button
           className="md:hidden flex items-center gap-1 px-3 py-2"
@@ -104,12 +102,19 @@ export default function PillNav() {
               {l.label}
             </Link>
           ))}
-          <a
-            href={site.whatsapp}
-            rel="noopener"
+          <Link
+            href="/contact/"
+            onClick={() => setOpen(false)}
             className="mt-2 px-5 py-3 rounded-full bg-violet text-center font-bold"
           >
             Talk to us
+          </Link>
+          <a
+            href={site.whatsapp}
+            rel="noopener"
+            className="text-sm font-bold text-white/60"
+          >
+            WhatsApp {site.phoneDisplay}
           </a>
         </div>
       )}

@@ -38,15 +38,15 @@ export const awards = [
 export const services = [
   {
     n: "01",
-    name: "Ecommerce",
-    mark: "Ec",
-    body: "WooCommerce and custom stores with M-Pesa Daraja, KES pricing, delivery zones and KRA eTIMS-ready invoicing.",
+    name: "Web Design",
+    mark: "Wd",
+    body: "Custom design systems, never templates. Brand sites, portfolios and booking platforms that look like the brand and load fast on Kenyan networks.",
   },
   {
     n: "02",
-    name: "Web Design",
-    mark: "Wd",
-    body: "Custom design systems, never templates. Sites that look like the brand and load fast on Kenyan networks.",
+    name: "Ecommerce",
+    mark: "Ec",
+    body: "WooCommerce and custom stores with M-Pesa Daraja, KES pricing, delivery zones and KRA eTIMS-ready invoicing.",
   },
   {
     n: "03",
@@ -58,7 +58,75 @@ export const services = [
     n: "04",
     name: "AI Tools",
     mark: "Ai",
-    body: "Claude-powered features inside real client systems: product copy pipelines, support triage, catalogue tooling.",
+    body: "Claude-powered features inside real client systems: content pipelines, support triage, catalogue tooling.",
+  },
+];
+
+export const serviceDetails = [
+  {
+    tag: "Web Design",
+    title: "Websites & Platforms",
+    lead: "Fast, modern sites for any business: corporate, portfolio, booking, directories. Designed from scratch, delivered with SEO ready from day one.",
+    items: [
+      "Custom UI/UX design, no templates",
+      "WordPress or Next.js, chosen per project",
+      "Responsive and fast on Kenyan networks",
+      "Domain, hosting and email configured",
+    ],
+    image: "/work/jesse-architect.webp",
+    imageAlt: "Jesse Architect portfolio website designed by Ken Designers",
+  },
+  {
+    tag: "Ecommerce",
+    title: "Online Stores",
+    lead: "Stores built for how Kenyans buy: M-Pesa STK push at checkout, KES pricing, county delivery zones and KRA eTIMS-ready invoicing.",
+    items: [
+      "WooCommerce and custom store builds",
+      "M-Pesa Daraja integration, tested with real transactions",
+      "Wholesale pricing and minimum-order logic",
+      "Delivery zones and cash-on-delivery rules",
+    ],
+    image: "/work/jinsoko.webp",
+    imageAlt: "Jinsoko wholesale ecommerce platform built by Ken Designers",
+  },
+  {
+    tag: "SEO",
+    title: "Search & Visibility",
+    lead: "Content architecture and structured data tuned to East African search intent, so customers find you before they find your competitors.",
+    items: [
+      "Technical SEO and Core Web Vitals",
+      "Local search and Google Business Profile",
+      "Structured data on every page",
+      "Content strategy for local intent",
+    ],
+    image: "/work/sense-of-adventure.webp",
+    imageAlt: "Sense of Adventure safari website with SEO-driven destination architecture",
+  },
+  {
+    tag: "Software",
+    title: "Custom Software",
+    lead: "When off-the-shelf does not fit: custom PHP and Node.js systems, plugins, integrations and internal tools built around your business.",
+    items: [
+      "Custom WordPress plugins",
+      "API integrations and dashboards",
+      "MySQL and PostgreSQL data modelling",
+      "Payment and logistics integrations",
+    ],
+    image: "/work/landplan.webp",
+    imageAlt: "LandPlan property listings platform with custom search built by Ken Designers",
+  },
+  {
+    tag: "AI",
+    title: "AI Integration",
+    lead: "Claude-powered tooling inside real production systems, from product copy pipelines to support triage. Nominated for Best Use of AI for E-Commerce.",
+    items: [
+      "Product description pipelines",
+      "Support and enquiry triage",
+      "Catalogue enrichment tooling",
+      "AI features scoped to real business problems",
+    ],
+    image: "/work/sabin-smarthub.webp",
+    imageAlt: "Sabin SmartHub electronics store with AI-assisted catalogue tooling",
   },
 ];
 
@@ -86,7 +154,7 @@ export const stats = [
 export const faqs = [
   {
     q: "What does Ken Designers actually do?",
-    a: "We design and build ecommerce and web platforms for the East African market: WooCommerce and custom WordPress builds, Next.js applications, M-Pesa Daraja integration, SEO and AI-powered tooling. Everything you need to sell online with a professional brand.",
+    a: "We design and build websites and digital platforms for the East African market: business sites, portfolios, booking systems, WooCommerce and custom stores, Next.js applications, M-Pesa integration, SEO and AI tooling. Whatever your business needs online, with a professional brand behind it.",
   },
   {
     q: "How long does a website take?",

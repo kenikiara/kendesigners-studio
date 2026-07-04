@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: "%s | Ken Designers",
   },
   description:
-    "Award-winning Nairobi studio. We design, build and run ecommerce that generates real customers: WooCommerce, Next.js, M-Pesa and AI tooling for the East African market.",
+    "Award-winning Nairobi studio. We design and build websites that generate real customers: brand sites, booking platforms, WooCommerce and Next.js builds, M-Pesa and AI tooling for East Africa.",
   openGraph: {
     siteName: site.name,
     type: "website",
