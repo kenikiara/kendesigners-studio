@@ -9,7 +9,7 @@ export default function Hero() {
     <section className="relative h-[92svh] min-h-[540px] overflow-hidden rounded-3xl">
       <video
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: "brightness(0.62) contrast(1.05) saturate(1.05)" }}
+        style={{ filter: "brightness(0.9) contrast(1.03) saturate(1.05)" }}
         src={`${basePath}/media/hero.mp4`}
         autoPlay
         muted
