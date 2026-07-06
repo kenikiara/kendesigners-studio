@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Device Admin policy declaration. As Device Owner these unlock the enforcement in
+     DevicePolicyController (lock, hide/suspend apps, wipe protection). -->
+<device-admin xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-policies>
+        <force-lock />
+        <wipe-data />
+        <disable-camera />
+        <limit-password />
+        <watch-login />
+    </uses-policies>
+</device-admin>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Compose supplies the real theming; these are the Android-level app themes. -->
+    <style name="Theme.Guardian" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Guardian.Fullscreen" parent="android:Theme.Material.NoActionBar.Fullscreen">
+        <item name="android:windowShowWallpaper">false</item>
+    </style>
+</resources>

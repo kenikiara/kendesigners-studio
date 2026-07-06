@@ -1,0 +1,12 @@
+.gradle/
+build/
+app/build/
+local.properties
+keystore.properties
+*.keystore
+*.jks
+# Secrets — never commit the real one.
+app/google-services.json
+.idea/
+*.iml
+captures/

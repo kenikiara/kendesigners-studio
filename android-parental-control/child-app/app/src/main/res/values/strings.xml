@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Family Guardian</string>
+
+    <!-- Notification channels -->
+    <string name="channel_monitoring">Monitoring</string>
+    <string name="channel_monitoring_desc">Shows that safety monitoring is active. This notice is always visible.</string>
+    <string name="channel_notices">Notices</string>
+
+    <!-- Ongoing service notification -->
+    <string name="monitoring_active_title">Family Guardian is on</string>
+    <string name="monitoring_active_text">Your parent set up safety monitoring on this phone.</string>
+    <string name="vpn_filter_active">Content filter active</string>
+
+    <!-- Transparency (child-facing) -->
+    <string name="transparency_title">What this app does</string>
+    <string name="transparency_body">This phone is set up with Family Guardian so your parent can help keep you safe. It shares your location, which apps you use and for how long, and lets your parent set screen-time and bedtime. You can always see it is running from this icon and the notification. This is on purpose — nothing here is hidden.</string>
+
+    <!-- Pairing -->
+    <string name="pair_title">Pair with your parent</string>
+    <string name="pair_body">Ask your parent to open their dashboard and show the pairing QR code, then scan it.</string>
+    <string name="pair_scan">Scan pairing code</string>
+    <string name="pair_scan_hint">Point the camera at the QR code shown on your parent\'s dashboard.</string>
+    <string name="pair_success">Paired. Monitoring is now active.</string>
+    <string name="pair_failed">Pairing failed. Ask your parent for a fresh code.</string>
+    <string name="pair_camera_needed">Camera access is needed to scan the pairing code.</string>
+
+    <string name="paired_title">Paired</string>
+    <string name="paired_body">This phone is linked to your family. Finish granting the permissions below so everything works.</string>
+
+    <!-- Permissions onboarding -->
+    <string name="perm_title">Permissions to finish setup</string>
+    <string name="perm_location">Allow location</string>
+    <string name="perm_bg_location">Allow location all the time</string>
+    <string name="perm_usage">Allow app-usage access</string>
+    <string name="perm_battery">Stop battery from killing the app</string>
+    <string name="perm_autostart">Open auto-start settings</string>
+
+    <!-- Lock / block screens -->
+    <string name="lock_title">Phone paused</string>
+    <string name="lock_footer">If you think this is a mistake, talk to your parent.</string>
+    <string name="bedtime_reason">It\'s bedtime. The phone is resting until morning.</string>
+    <string name="budget_reason">Today\'s screen-time is used up.</string>
+    <string name="blocked_title">App blocked</string>
+    <string name="blocked_generic">This app is not available right now.</string>
+    <string name="blocked_ok">Go back</string>
+
+    <!-- Device admin -->
+    <string name="device_admin_label">Family Guardian safety controls</string>
+    <string name="device_admin_desc">Lets your parent set app limits, bedtime, and safe zones, and keeps the app from being removed.</string>
+</resources>

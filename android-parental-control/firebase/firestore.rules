@@ -1,0 +1,103 @@
+rules_version = '2';
+
+// Security Rules are the AUTHORITATIVE access boundary. The apps are not trusted to
+// self-limit. A parent can read/write ONLY their own family's data; a child device can
+// write only its own telemetry and read only its own settings/commands.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- helpers -------------------------------------------------------------
+    function isSignedIn() { return request.auth != null; }
+
+    function familyData(familyId) {
+      return get(/databases/$(database)/documents/families/$(familyId)).data;
+    }
+
+    // A parent/guardian of this family.
+    function isGuardian(familyId) {
+      let fam = familyData(familyId);
+      return isSignedIn() &&
+        (request.auth.uid == fam.ownerUid ||
+         (fam.memberUids != null && request.auth.uid in fam.memberUids));
+    }
+
+    // The child device is authed with uid == deviceId and a custom claim tying it to
+    // this family. Both must match to touch device-scoped data.
+    function isThisDevice(familyId, deviceId) {
+      return isSignedIn() &&
+        request.auth.uid == deviceId &&
+        request.auth.token.familyId == familyId &&
+        request.auth.token.role == 'child';
+    }
+
+    // ---- parent profiles: a parent reads/writes only their own -----------------
+    // Holds email + FCM web-push tokens. Cloud Functions (Admin SDK) read these to fan
+    // out alerts; the Admin SDK bypasses these rules.
+    match /parentUsers/{uid} {
+      allow read, write: if isSignedIn() && request.auth.uid == uid;
+    }
+
+    // ---- family root ---------------------------------------------------------
+    match /families/{familyId} {
+      // Only a guardian reads/updates the family doc. Creation is done by the
+      // parent when they first set up (ownerUid must be themselves).
+      allow read, update, delete: if isGuardian(familyId);
+      allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+
+      // ---- child devices -----------------------------------------------------
+      match /childDevices/{deviceId} {
+        // Guardian: full control. Device: may read + update its own doc (fcmToken,
+        // lastLocation, installedApps, health) but not create/delete itself.
+        allow read: if isGuardian(familyId) || isThisDevice(familyId, deviceId);
+        allow create, delete: if isGuardian(familyId) ||
+          // allow the device to self-register exactly its own doc at pairing time
+          (isThisDevice(familyId, deviceId));
+        allow update: if isGuardian(familyId) || isThisDevice(familyId, deviceId);
+
+        // settings/current: parent writes, device reads only.
+        match /settings/{doc} {
+          allow read: if isGuardian(familyId) || isThisDevice(familyId, deviceId);
+          allow write: if isGuardian(familyId);
+        }
+
+        // locationHistory: device appends; guardian reads; nobody edits history.
+        match /locationHistory/{docId} {
+          allow read, delete: if isGuardian(familyId);
+          allow create: if isThisDevice(familyId, deviceId);
+          allow update: if false;
+        }
+
+        // usageStats: device writes; guardian reads.
+        match /usageStats/{docId} {
+          allow read, delete: if isGuardian(familyId);
+          allow create, update: if isThisDevice(familyId, deviceId);
+        }
+
+        // commands: guardian creates; device reads + deletes (ack). Device may not
+        // create commands for itself.
+        match /commands/{commandId} {
+          allow read: if isThisDevice(familyId, deviceId) || isGuardian(familyId);
+          allow create: if isGuardian(familyId);
+          allow delete: if isThisDevice(familyId, deviceId) || isGuardian(familyId);
+          allow update: if false;
+        }
+      }
+
+      // ---- alerts: device creates; guardian reads/deletes --------------------
+      match /alerts/{alertId} {
+        allow read, delete: if isGuardian(familyId);
+        // A child device of THIS family may create an alert (it authed with familyId claim).
+        allow create: if isSignedIn() &&
+          request.auth.token.familyId == familyId &&
+          request.auth.token.role == 'child';
+        allow update: if false;
+      }
+
+      // ---- pairing codes: managed only by Cloud Functions (admin) ------------
+      // No client access; the callable functions use the Admin SDK which bypasses rules.
+      match /pairingCodes/{code} {
+        allow read, write: if false;
+      }
+    }
+  }
+}

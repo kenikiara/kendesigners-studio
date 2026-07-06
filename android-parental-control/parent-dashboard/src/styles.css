@@ -1,0 +1,43 @@
+:root { --fg: #14342c; --bg: #f6f8f7; --accent: #2e7d6b; --danger: #b3261e; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; color: var(--fg); background: var(--bg); }
+button { cursor: pointer; border: none; border-radius: 8px; padding: 8px 12px; background: var(--accent); color: #fff; }
+button.link { background: none; color: var(--accent); padding: 2px 6px; }
+button.link.danger { color: var(--danger); }
+input, select { padding: 6px 8px; border: 1px solid #cbd5d0; border-radius: 6px; margin: 4px; }
+
+.auth { max-width: 420px; margin: 10vh auto; padding: 24px; background: #fff; border-radius: 12px; }
+.auth form { display: flex; flex-direction: column; gap: 8px; }
+.notice { font-size: 13px; color: #55635e; background: #eef4f2; padding: 10px; border-radius: 8px; }
+.error { color: var(--danger); }
+
+.app header { display: flex; align-items: center; gap: 16px; padding: 12px 20px; background: #fff; border-bottom: 1px solid #e2e8e5; }
+.app header strong { font-size: 18px; }
+.app header .link { margin-left: auto; }
+
+.commandbar { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 20px; background: #fff; border-bottom: 1px solid #e2e8e5; }
+
+.tabs { display: flex; gap: 4px; padding: 8px 20px; }
+.tabs button { background: none; color: var(--fg); }
+.tabs button.active { background: var(--accent); color: #fff; }
+
+main { padding: 20px; }
+.empty, .hint, .loading { color: #55635e; }
+
+table.apps { width: 100%; border-collapse: collapse; background: #fff; }
+table.apps th, table.apps td { text-align: left; padding: 8px; border-bottom: 1px solid #eef2f0; }
+
+.rules section, .devices section { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+.rules label, .devices label { display: block; margin: 6px 0; }
+.rules .row { display: flex; flex-wrap: wrap; align-items: center; }
+
+.feed { list-style: none; padding: 0; }
+.feed li { display: grid; grid-template-columns: 220px 1fr 200px auto; gap: 8px; align-items: center;
+  background: #fff; padding: 10px; border-radius: 8px; margin-bottom: 6px; }
+.feed li.urgent { border-left: 4px solid var(--danger); }
+.feed .time { color: #55635e; font-size: 13px; }
+
+.device-card { background: #fff; border-radius: 8px; padding: 12px; margin: 8px 0; }
+.health { list-style: none; padding: 0; font-size: 14px; }
+.health li.urgent { color: var(--danger); }
+.qr img, .devices img { width: 220px; height: 220px; }

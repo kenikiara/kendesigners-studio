@@ -1,0 +1,27 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "locationHistory",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "alerts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "usageStats",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "epochDay", "order": "DESCENDING" },
+        { "fieldPath": "foregroundMs", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

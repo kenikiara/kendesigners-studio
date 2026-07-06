@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ============================================================= -->
+    <!-- PERMISSIONS — every permission is explained here.             -->
+    <!-- ============================================================= -->
+
+    <!-- Internet + network state: talk to Firebase (Firestore/Auth/FCM). -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Foreground + coarse location: needed for the fused location provider. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Background location: report location and evaluate geofences while the
+         child app is not in the foreground. Requested SEPARATELY at runtime on
+         Android 10+ ("Allow all the time"). -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- Usage access: read per-app usage time via UsageStatsManager. This is a
+         SPECIAL access the user grants in Settings, not a normal runtime grant. -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- Query all installed packages: build the app inventory for the parent.
+         Sensitive on Android 11+; justified because reporting installed apps is a
+         core, disclosed feature of this parental tool. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <!-- Foreground service so monitoring survives Doze/app-standby. Android 14
+         requires a typed foreground service; we declare location + special-use. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!-- Post the persistent monitoring notification (Android 13+ runtime grant). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Ask the user to exempt us from battery optimization so we aren't killed. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- Restart monitoring after reboot (BOOT_COMPLETED / LOCKED_BOOT_COMPLETED). -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Keep CPU briefly awake while uploading location/handling a command. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- "Ring the phone" (find-it) at full volume even in silent mode. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- Camera: used ONLY on the pairing screen to scan the parent's pairing QR. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+
+    <!-- Optional local content-filter VPN. Declared but only used if the parent
+         enables the VpnService blocklist path (see content/FilterVpnService). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
+
+    <!-- Draw the full-screen block overlay in the AccessibilityService FALLBACK
+         path (used only when the app is NOT Device Owner). -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <application
+        android:name=".GuardianApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Guardian"
+        tools:targetApi="31">
+
+        <!-- Visible launcher activity: the child can open the app and see what is
+             monitored (transparency requirement). -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Camera-based QR pairing screen. -->
+        <activity
+            android:name=".ui.PairingActivity"
+            android:exported="false" />
+
+        <!-- Full-screen "bedtime" / "blocked" lock screen. -->
+        <activity
+            android:name=".ui.LockScreenActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:theme="@style/Theme.Guardian.Fullscreen" />
+
+        <!-- Block overlay used by the AccessibilityService fallback. -->
+        <activity
+            android:name=".ui.BlockOverlayActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Guardian.Fullscreen" />
+
+        <!-- Persistent foreground service that keeps monitoring alive. -->
+        <service
+            android:name=".service.GuardianForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="location|specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="parental_monitoring_with_child_knowledge" />
+        </service>
+
+        <!-- FCM receiver for remote commands + push alerts. -->
+        <service
+            android:name=".fcm.GuardianFcmService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- AccessibilityService FALLBACK for foreground-app detection + block
+             overlay on devices where the app is NOT Device Owner. -->
+        <service
+            android:name=".blocking.AppBlockAccessibilityService"
+            android:exported="false"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- Optional content-filter VPN (local blocklist). -->
+        <service
+            android:name=".content.FilterVpnService"
+            android:exported="false"
+            android:permission="android.permission.BIND_VPN_SERVICE"
+            android:foregroundServiceType="systemExempted">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+        </service>
+
+        <!-- Device Owner / Device Admin receiver: the primary enforcement path. -->
+        <receiver
+            android:name=".admin.GuardianDeviceAdminReceiver"
+            android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.PROFILE_PROVISIONING_COMPLETE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Restart monitoring after boot. -->
+        <receiver
+            android:name=".boot.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Geofence transition callbacks from the Geofencing API. -->
+        <receiver
+            android:name=".location.GeofenceBroadcastReceiver"
+            android:exported="false" />
+
+        <!-- Alarm to end bedtime / re-evaluate time limits. -->
+        <receiver
+            android:name=".screentime.ScheduleAlarmReceiver"
+            android:exported="false" />
+
+    </application>
+</manifest>
