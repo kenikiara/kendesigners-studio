@@ -1,0 +1,22 @@
+; GoldStraddleScalper v1.00
+; Preset: XAUUSD M1 - small account, tight loss control
+; Load in MT5 Strategy Tester / EA inputs via "Load" button
+InpMagic=418418
+InpFixedLots=0.0
+InpRiskPercent=0.5
+InpMaxLots=0.50
+InpUseATRDistance=true
+InpATRPeriod=14
+InpATRMultiplier=2.0
+InpMinDistancePts=200
+InpMaxDistancePts=600
+InpFixedDistancePts=300
+InpTrailStepPts=30
+InpRewardMultiple=0.0
+InpMaxDailyLossPct=3.0
+InpMaxConsecLosses=3
+InpCooldownMinutes=30
+InpMaxSpreadPts=45
+InpUseSession=true
+InpStartHour=8
+InpEndHour=21

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  GoldStraddleScalper - backtest configuration reference.
+  MT5's Strategy Tester runs the compiled EA (GoldStraddleScalper.mq5 -> .ex5);
+  it does not load XML strategies. This file documents the exact tester setup
+  to reproduce the intended backtest. Enter these values in the tester UI and
+  load GoldStraddleScalper.set for the inputs.
+-->
+<Backtest name="GoldStraddleScalper" version="1.00">
+  <Expert file="GoldStraddleScalper.mq5" compiledAs="GoldStraddleScalper.ex5"/>
+  <Tester>
+    <Symbol>XAUUSD</Symbol>
+    <Timeframe>M1</Timeframe>
+    <Model>Every tick based on real ticks</Model>
+    <Deposit currency="USD">500</Deposit>
+    <Leverage>1:500</Leverage>
+    <Period note="include both trending and ranging months">last 12 months minimum</Period>
+    <ForwardTesting>1/3</ForwardTesting>
+  </Tester>
+  <Inputs setFile="GoldStraddleScalper.set">
+    <Input name="InpMagic" value="418418"/>
+    <Input name="InpFixedLots" value="0.0" note="0 = risk-based sizing"/>
+    <Input name="InpRiskPercent" value="0.5" note="% of balance risked per flip"/>
+    <Input name="InpMaxLots" value="0.50"/>
+    <Input name="InpUseATRDistance" value="true"/>
+    <Input name="InpATRPeriod" value="14"/>
+    <Input name="InpATRMultiplier" value="2.0"/>
+    <Input name="InpMinDistancePts" value="200"/>
+    <Input name="InpMaxDistancePts" value="600"/>
+    <Input name="InpFixedDistancePts" value="300"/>
+    <Input name="InpTrailStepPts" value="30"/>
+    <Input name="InpRewardMultiple" value="0.0" note="0 = pure trailing exit, as in the video"/>
+    <Input name="InpMaxDailyLossPct" value="3.0"/>
+    <Input name="InpMaxConsecLosses" value="3"/>
+    <Input name="InpCooldownMinutes" value="30"/>
+    <Input name="InpMaxSpreadPts" value="45"/>
+    <Input name="InpUseSession" value="true"/>
+    <Input name="InpStartHour" value="8" note="server time"/>
+    <Input name="InpEndHour" value="21" note="server time; flat outside session"/>
+  </Inputs>
+  <Optimization note="ranges worth optimizing per broker feed">
+    <Param name="InpATRMultiplier" start="1.2" step="0.2" stop="3.0"/>
+    <Param name="InpMinDistancePts" start="150" step="50" stop="400"/>
+    <Param name="InpMaxConsecLosses" start="2" step="1" stop="5"/>
+    <Param name="InpStartHour" start="6" step="1" stop="12"/>
+  </Optimization>
+</Backtest>
