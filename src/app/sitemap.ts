@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${site.url}/articles/`, priority: 0.8 },
     { url: `${site.url}/about/`, priority: 0.7 },
     { url: `${site.url}/contact/`, priority: 0.7 },
+    { url: `${site.url}/bonga/`, priority: 0.7 },
     ...projects.map((p) => ({
       url: `${site.url}/work/${p.slug}/`,
       priority: 0.6,
