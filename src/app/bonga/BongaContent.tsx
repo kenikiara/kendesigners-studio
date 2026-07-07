@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -159,6 +159,120 @@ function ArtRow({
   );
 }
 
+// Animated hero "voice orb": morphing gradient blob, pulsing rings, a live
+// equalizer, and two floating message bubbles that cycle Sheng/English lines.
+function HeroOrb() {
+  const vizRef = useRef<HTMLDivElement>(null);
+
+  const eqBars = useMemo(() => {
+    const N = 21;
+    return Array.from({ length: N }, (_, i) => {
+      const t = i / (N - 1);
+      const amp = 16 + 64 * Math.exp(-Math.pow((t - 0.5) / 0.27, 2)); // tall middle, short edges
+      return {
+        h: Math.round(amp),
+        delay: -((i * 97) % 1100),
+        dur: 880 + ((i * 137) % 520),
+      };
+    });
+  }, []);
+
+  const bubbleMsgs = useMemo(
+    () => [
+      [
+        "Niaje Brian, uko na ile report ya jana?",
+        "Meeting imehamia saa nane kesho.",
+        "Tuma hiyo quote leo please.",
+      ],
+      [
+        "Tell the team the invoice is ready.",
+        "Thanks Amina, cheque is out for delivery.",
+        "Draft attached, review by Friday.",
+      ],
+    ],
+    []
+  );
+
+  const [mi, setMi] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setMi((m) => m + 1), 4600);
+    return () => clearInterval(t);
+  }, []);
+
+  // Pointer parallax on the floating bubbles (hover devices, motion allowed).
+  useEffect(() => {
+    const viz = vizRef.current;
+    if (!viz) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(hover: hover)").matches) return;
+    const bubbles = Array.from(
+      viz.querySelectorAll<HTMLElement>(".bonga-bubble")
+    );
+    const onMove = (e: MouseEvent) => {
+      const r = viz.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      bubbles.forEach((bb, k) => {
+        const f = k === 0 ? 14 : -11;
+        bb.style.transform = `translate(${x * f}px, ${y * f}px)`;
+      });
+    };
+    const onLeave = () => bubbles.forEach((bb) => (bb.style.transform = ""));
+    viz.addEventListener("mousemove", onMove);
+    viz.addEventListener("mouseleave", onLeave);
+    return () => {
+      viz.removeEventListener("mousemove", onMove);
+      viz.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={vizRef}
+      aria-hidden="true"
+      className="gs-reveal relative mx-auto flex aspect-square w-full max-w-[300px] items-center justify-center lg:max-w-[480px]"
+    >
+      <span className="bonga-ring" />
+      <span className="bonga-ring" style={{ animationDelay: "1.3s" }} />
+      <span className="bonga-ring" style={{ animationDelay: "2.6s" }} />
+      <div className="bonga-blob" />
+      <div className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-center gap-[5px]">
+        {eqBars.map((b, i) => (
+          <span
+            key={i}
+            className="bonga-eqbar"
+            style={
+              {
+                "--h": `${b.h}px`,
+                animationDelay: `${b.delay}ms`,
+                animationDuration: `${b.dur}ms`,
+              } as CSSProperties
+            }
+          />
+        ))}
+      </div>
+
+      <div className="bonga-bubble absolute right-[-2%] top-[3%] z-[3] hidden max-w-[230px] rounded-2xl border border-white/10 bg-[#101014] px-4 py-3 text-sm leading-snug shadow-2xl sm:block">
+        <span className="mb-1 block text-[0.62rem] font-bold uppercase tracking-widest text-muted">
+          💬 WhatsApp Web
+        </span>
+        {bubbleMsgs[0][mi % bubbleMsgs[0].length]}
+        <span className="ml-1 font-extrabold text-[#29c274]">✓</span>
+      </div>
+      <div
+        className="bonga-bubble absolute bottom-[2%] left-[-3%] z-[3] hidden max-w-[230px] rounded-2xl border border-white/10 bg-[#101014] px-4 py-3 text-sm leading-snug shadow-2xl sm:block"
+        style={{ animationDelay: "2s" }}
+      >
+        <span className="mb-1 block text-[0.62rem] font-bold uppercase tracking-widest text-muted">
+          📧 Gmail
+        </span>
+        {bubbleMsgs[1][mi % bubbleMsgs[1].length]}
+        <span className="ml-1 font-extrabold text-[#29c274]">✓</span>
+      </div>
+    </div>
+  );
+}
+
 export default function BongaContent() {
   const root = useRef<HTMLDivElement>(null);
 
@@ -295,18 +409,52 @@ export default function BongaContent() {
         @keyframes bonga-scroll{to{transform:translateX(-50%)}}
         .bonga-marquee{animation:bonga-scroll 34s linear infinite}
         .bonga-marquee-mask:hover .bonga-marquee{animation-play-state:paused}
+        .bonga-blob{
+          width:min(80%,360px);aspect-ratio:1;
+          background:
+            radial-gradient(38% 42% at 63% 30%,rgba(251,188,0,.6),transparent 62%),
+            radial-gradient(48% 52% at 28% 70%,rgba(139,131,232,.85),transparent 64%),
+            radial-gradient(62% 64% at 50% 46%,#006fff 0%,rgba(0,111,255,.30) 58%,transparent 74%),
+            radial-gradient(closest-side,#0a1a34,#050508);
+          border-radius:47% 53% 58% 42%/49% 44% 56% 51%;
+          animation:bonga-morph 11s ease-in-out infinite alternate,bonga-drift 26s linear infinite;
+          box-shadow:0 0 110px 6px rgba(0,111,255,.32),inset 0 0 70px rgba(0,0,0,.4);
+          filter:saturate(1.15);
+        }
+        @keyframes bonga-morph{
+          0%{border-radius:47% 53% 58% 42%/49% 44% 56% 51%}
+          33%{border-radius:57% 43% 41% 59%/44% 58% 42% 56%}
+          66%{border-radius:41% 59% 55% 45%/57% 42% 58% 43%}
+          100%{border-radius:52% 48% 44% 56%/46% 55% 45% 54%}
+        }
+        @keyframes bonga-drift{to{transform:rotate(360deg)}}
+        .bonga-ring{
+          position:absolute;inset:0;margin:auto;width:min(80%,360px);aspect-ratio:1;border-radius:50%;
+          border:1px solid rgba(61,139,255,.55);opacity:0;
+          animation:bonga-ringpulse 3.9s cubic-bezier(.16,1,.3,1) infinite;
+        }
+        @keyframes bonga-ringpulse{0%{transform:scale(.92);opacity:.65}70%{opacity:.2}100%{transform:scale(1.42);opacity:0}}
+        .bonga-eqbar{
+          width:6px;border-radius:3px;background:rgba(255,255,255,.92);height:12px;
+          box-shadow:0 0 16px rgba(160,200,255,.55);
+          animation-name:bonga-eqb;animation-timing-function:ease-in-out;animation-iteration-count:infinite;
+        }
+        @keyframes bonga-eqb{0%,100%{height:10px}50%{height:var(--h,58px)}}
+        .bonga-bubble{animation:bonga-floaty 6s ease-in-out infinite;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+        @keyframes bonga-floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
         @media (prefers-reduced-motion: reduce){
-          .bonga-rise{animation:none}
-          .bonga-marquee{animation:none}
+          .bonga-rise,.bonga-marquee,.bonga-blob,.bonga-ring,.bonga-eqbar,.bonga-bubble{animation:none}
         }
       `}</style>
 
       {/* Hero */}
       <section className="max-w-7xl mx-auto px-4 md:px-6 pt-36 md:pt-44 pb-6">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr] lg:gap-10">
+          <div>
         <p className="gs-reveal inline-flex items-center gap-2 rounded-full bg-yellow/10 border border-yellow/25 text-yellow px-4 py-1.5 text-xs font-bold">
           ● Free for Windows · Made in Kenya 🇰🇪
         </p>
-        <h1 className="gs-reveal display text-6xl sm:text-8xl md:text-9xl mt-8">
+        <h1 className="gs-reveal display text-6xl sm:text-7xl md:text-8xl mt-8">
           Usiandike.
           <br />
           <span className="text-blue">Bonga.</span>
@@ -346,6 +494,9 @@ export default function BongaContent() {
         <p className="gs-reveal mt-5 text-xs font-semibold text-muted">
           ~70 MB zip · Windows 10/11 · your voice never leaves your laptop
         </p>
+          </div>
+          <HeroOrb />
+        </div>
       </section>
 
       {/* Live demo */}
