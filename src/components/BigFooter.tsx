@@ -21,13 +21,7 @@ export default function BigFooter() {
           <Link href="/articles/" className="hover:text-white">Articles</Link>
           <Link href="/about/" className="hover:text-white">Studio</Link>
           <Link href="/contact/" className="hover:text-white">Contact</Link>
-          {/* static page in public/, not a Next route — plain <a> with manual basePath */}
-          <a
-            href={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/bonga/`}
-            className="hover:text-white"
-          >
-            BONGA
-          </a>
+          <Link href="/bonga/" className="hover:text-white">BONGA</Link>
           <a href={site.tiktok} rel="noopener" className="hover:text-white">TikTok</a>
         </nav>
 

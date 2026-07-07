@@ -11,6 +11,7 @@ const links = [
   { href: "/achievements/", label: "Awards" },
   { href: "/articles/", label: "Articles" },
   { href: "/about/", label: "Studio" },
+  { href: "/bonga/", label: "Bonga", sup: "app" },
 ];
 
 // Floating pill nav, strove-style: full pill at the top of the page,
@@ -45,7 +46,7 @@ export default function PillNav() {
 
         <div
           className={`hidden md:flex items-center overflow-hidden transition-all duration-500 ${
-            compact && !open ? "max-w-0 opacity-0" : "max-w-lg opacity-100"
+            compact && !open ? "max-w-0 opacity-0" : "max-w-xl opacity-100"
           }`}
         >
           {links.map((l) => (
