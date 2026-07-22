@@ -2,32 +2,43 @@
 //|                                          GoldStraddleScalper.mq5 |
 //|      Trailing stop-and-reverse straddle scalper for XAUUSD (M1)  |
 //|                                                                  |
-//| Logic (mirrors the reference video):                             |
-//|  - When flat, bracket price with a BUY STOP above and a          |
-//|    SELL STOP below, both at distance D.                          |
-//|  - When one side fills, the opposite stop order stays behind     |
-//|    price as combined stop-loss + reversal entry, and trails      |
-//|    the position as it moves into profit.                         |
-//|  - Hitting that order closes the trade and opens the reverse     |
-//|    in the same moment: small capped losses, winners run on       |
-//|    the trail.                                                    |
+//| Two entry modes, same risk engine:                               |
 //|                                                                  |
-//| Small-account protection:                                        |
-//|  - Risk-% position sizing (never a fixed big lot), hard SL on    |
-//|    every position, daily equity loss halt, loss-streak           |
-//|    cooldown, session filter (flat outside hours), spread         |
-//|    filter. Volume never escalates - no martingale, ever.         |
+//|  BREAKOUT (as in the reference video):                           |
+//|    Flat -> BUY STOP above + SELL STOP below at distance D.        |
+//|    A fill leaves the opposite stop behind price as combined      |
+//|    stop-loss + reversal; it trails as the trade runs. Small      |
+//|    capped losses, winners ride the trail. Trend-following.        |
 //|                                                                  |
-//| Safe on both hedging and netting accounts.                       |
+//|  REVERSE (entries and stops swapped - the "interchanged" build): |
+//|    Flat -> BUY LIMIT below + SELL LIMIT above at distance D.      |
+//|    You now enter where the breakout build would have stopped      |
+//|    out. Fixed take-profit at +D, hard stop at -D, and the stop    |
+//|    doubles as the reversal. Mean-reversion / fade.                |
+//|                                                                  |
+//| Either way each trade's loss is capped at one distance D - no     |
+//| held losers, no martingale, volume never escalates.              |
+//|                                                                  |
+//| Small-account protection: risk-% sizing, hard SL on every order, |
+//| daily equity loss halt, loss-streak cooldown, session + spread   |
+//| filters. Safe on hedging and netting accounts.                   |
 //| Attach to: XAUUSD, M1.                                           |
 //+------------------------------------------------------------------+
 #property copyright "kendesigners-studio"
-#property version   "1.00"
+#property version   "1.10"
 
 #include <Trade\Trade.mqh>
 
+//--- entry direction ----------------------------------------------
+enum ENUM_ENTRY_MODE
+  {
+   MODE_BREAKOUT = 0,   // Breakout: buy the break up / sell the break down (video)
+   MODE_REVERSE  = 1    // Reverse: buy the dip / sell the rally (entries & SL swapped)
+  };
+
 //--- inputs -------------------------------------------------------
 input group "Core strategy"
+input ENUM_ENTRY_MODE InpEntryMode = MODE_BREAKOUT; // Entry mode
 input long    InpMagic            = 418418;  // Magic number
 input double  InpFixedLots        = 0.0;     // Fixed lots (0 = size from risk %)
 input double  InpRiskPercent      = 0.5;     // Risk per flip (% of balance)
@@ -39,7 +50,7 @@ input double  InpMinDistancePts   = 200;     // Min bracket distance (points)
 input double  InpMaxDistancePts   = 600;     // Max bracket distance (points)
 input double  InpFixedDistancePts = 300;     // Bracket distance if ATR off (points)
 input double  InpTrailStepPts     = 30;      // Min improvement before re-trailing (points)
-input double  InpRewardMultiple   = 0.0;     // TP = distance x this (0 = trail only, like the video)
+input double  InpRewardMultiple   = 0.0;     // BREAKOUT only: TP = distance x this (0 = trail only)
 
 input group "Small-account protection"
 input double  InpMaxDailyLossPct  = 3.0;     // Daily equity loss % -> flat + halt for the day
@@ -116,8 +127,9 @@ void OnTick()
    ulong posTickets[];
    int nPos = MyPositions(posTickets);
 
-   ulong buyStopT = 0, sellStopT = 0;
-   int nPend = MyPendings(buyStopT, sellStopT);
+   ulong buyT = 0, sellT = 0;
+   long  buyType = -1, sellType = -1;
+   int nPend = MyPendings(buyT, buyType, sellT, sellType);
 
    // transient state right after a flip on a hedging account:
    // the reversal filled while the old position was still open.
@@ -136,7 +148,7 @@ void OnTick()
       double spreadPts = (tick.ask - tick.bid) / _Point;
       if(nPend == 2)
         {
-         RecenterStraddle(tick, D, buyStopT, sellStopT, spreadPts);
+         RecenterStraddle(tick, D, buyT, sellT, spreadPts);
          return;
         }
       if(nPend == 1)              // half a straddle left over - rebuild cleanly
@@ -149,7 +161,7 @@ void OnTick()
       return;
      }
 
-   ManagePosition(posTickets[0], tick, D, buyStopT, sellStopT);
+   ManagePosition(posTickets[0], tick, D, buyT, buyType, sellT, sellType);
   }
 
 //+------------------------------------------------------------------+
@@ -316,10 +328,12 @@ int MyPositions(ulong &tickets[])
   }
 
 //+------------------------------------------------------------------+
-int MyPendings(ulong &buyStop, ulong &sellStop)
+//| Count my pending orders by side (stop OR limit), newest wins     |
+//+------------------------------------------------------------------+
+int MyPendings(ulong &buyT, long &buyType, ulong &sellT, long &sellType)
   {
-   buyStop  = 0;
-   sellStop = 0;
+   buyT = 0;  buyType  = -1;
+   sellT = 0; sellType = -1;
    int n = 0;
    for(int i = OrdersTotal() - 1; i >= 0; i--)
      {
@@ -331,15 +345,19 @@ int MyPendings(ulong &buyStop, ulong &sellStop)
       if(OrderGetInteger(ORDER_MAGIC) != InpMagic)
          continue;
       long type = OrderGetInteger(ORDER_TYPE);
-      if(type == ORDER_TYPE_BUY_STOP)
+      if(type == ORDER_TYPE_BUY_STOP || type == ORDER_TYPE_BUY_LIMIT)
         {
-         buyStop = t;
-         n++;
+         if(buyT == 0)
+           {
+            buyT = t;  buyType = type;  n++;
+           }
         }
-      else if(type == ORDER_TYPE_SELL_STOP)
+      else if(type == ORDER_TYPE_SELL_STOP || type == ORDER_TYPE_SELL_LIMIT)
         {
-         sellStop = t;
-         n++;
+         if(sellT == 0)
+           {
+            sellT = t;  sellType = type;  n++;
+           }
         }
      }
    return n;
@@ -392,6 +410,36 @@ void CloseEverything()
   }
 
 //+------------------------------------------------------------------+
+//| Straddle legs for the current entry mode                         |
+//|  BREAKOUT: buy stop above / sell stop below, SL one D behind.     |
+//|  REVERSE : buy limit below / sell limit above, fixed +/-D TP,     |
+//|            hard SL one D beyond entry (entries & SL swapped).      |
+//+------------------------------------------------------------------+
+void StraddleLegs(const MqlTick &tick, double D,
+                  double &buyPrice, double &buySL, double &buyTP,
+                  double &sellPrice, double &sellSL, double &sellTP)
+  {
+   if(InpEntryMode == MODE_BREAKOUT)
+     {
+      buyPrice  = RoundPrice(tick.ask + D);
+      buySL     = RoundPrice(buyPrice - D);
+      buyTP     = (InpRewardMultiple > 0.0) ? RoundPrice(buyPrice + D * InpRewardMultiple) : 0.0;
+      sellPrice = RoundPrice(tick.bid - D);
+      sellSL    = RoundPrice(sellPrice + D);
+      sellTP    = (InpRewardMultiple > 0.0) ? RoundPrice(sellPrice - D * InpRewardMultiple) : 0.0;
+     }
+   else // MODE_REVERSE
+     {
+      buyPrice  = RoundPrice(tick.bid - D);
+      buySL     = RoundPrice(buyPrice - D);
+      buyTP     = RoundPrice(buyPrice + D);
+      sellPrice = RoundPrice(tick.ask + D);
+      sellSL    = RoundPrice(sellPrice + D);
+      sellTP    = RoundPrice(sellPrice - D);
+     }
+  }
+
+//+------------------------------------------------------------------+
 //| Flat: place the two-sided entry straddle                         |
 //+------------------------------------------------------------------+
 void PlaceStraddle(const MqlTick &tick, double D)
@@ -400,15 +448,19 @@ void PlaceStraddle(const MqlTick &tick, double D)
    if(vol <= 0.0)
       return;
 
-   double buyPrice  = RoundPrice(tick.ask + D);
-   double sellPrice = RoundPrice(tick.bid - D);
-   double buyTP  = (InpRewardMultiple > 0.0) ? RoundPrice(buyPrice + D * InpRewardMultiple)  : 0.0;
-   double sellTP = (InpRewardMultiple > 0.0) ? RoundPrice(sellPrice - D * InpRewardMultiple) : 0.0;
+   double bP, bSL, bTP, sP, sSL, sTP;
+   StraddleLegs(tick, D, bP, bSL, bTP, sP, sSL, sTP);
 
-   g_trade.BuyStop(vol, buyPrice, _Symbol, RoundPrice(buyPrice - D), buyTP,
-                   ORDER_TIME_GTC, 0, "straddle");
-   g_trade.SellStop(vol, sellPrice, _Symbol, RoundPrice(sellPrice + D), sellTP,
-                    ORDER_TIME_GTC, 0, "straddle");
+   if(InpEntryMode == MODE_BREAKOUT)
+     {
+      g_trade.BuyStop(vol, bP, _Symbol, bSL, bTP, ORDER_TIME_GTC, 0, "straddle");
+      g_trade.SellStop(vol, sP, _Symbol, sSL, sTP, ORDER_TIME_GTC, 0, "straddle");
+     }
+   else
+     {
+      g_trade.BuyLimit(vol, bP, _Symbol, bSL, bTP, ORDER_TIME_GTC, 0, "straddle");
+      g_trade.SellLimit(vol, sP, _Symbol, sSL, sTP, ORDER_TIME_GTC, 0, "straddle");
+     }
   }
 
 //+------------------------------------------------------------------+
@@ -420,48 +472,53 @@ void RecenterStraddle(const MqlTick &tick, double D,
    if(spreadPts > InpMaxSpreadPts)   // don't chase price on a bad spread
       return;
 
-   double step  = MathMax(InpTrailStepPts, 10.0) * _Point;
-   double dBuy  = RoundPrice(tick.ask + D);
-   double dSell = RoundPrice(tick.bid - D);
+   double step = MathMax(InpTrailStepPts, 10.0) * _Point;
+   double bP, bSL, bTP, sP, sSL, sTP;
+   StraddleLegs(tick, D, bP, bSL, bTP, sP, sSL, sTP);
 
    if(buyT != 0 && OrderSelect(buyT))
      {
       double op = OrderGetDouble(ORDER_PRICE_OPEN);
-      if(MathAbs(op - dBuy) > step)
-        {
-         double tp = (InpRewardMultiple > 0.0) ? RoundPrice(dBuy + D * InpRewardMultiple) : 0.0;
-         g_trade.OrderModify(buyT, dBuy, RoundPrice(dBuy - D), tp, ORDER_TIME_GTC, 0);
-        }
+      if(MathAbs(op - bP) > step)
+         g_trade.OrderModify(buyT, bP, bSL, bTP, ORDER_TIME_GTC, 0);
      }
    if(sellT != 0 && OrderSelect(sellT))
      {
       double op = OrderGetDouble(ORDER_PRICE_OPEN);
-      if(MathAbs(op - dSell) > step)
-        {
-         double tp = (InpRewardMultiple > 0.0) ? RoundPrice(dSell - D * InpRewardMultiple) : 0.0;
-         g_trade.OrderModify(sellT, dSell, RoundPrice(dSell + D), tp, ORDER_TIME_GTC, 0);
-        }
+      if(MathAbs(op - sP) > step)
+         g_trade.OrderModify(sellT, sP, sSL, sTP, ORDER_TIME_GTC, 0);
      }
   }
 
 //+------------------------------------------------------------------+
-//| In position: trail the reversal stop order + the position SL     |
+//| Dispatch position management by entry mode                       |
 //+------------------------------------------------------------------+
 void ManagePosition(ulong posTicket, const MqlTick &tick, double D,
-                    ulong buyStopT, ulong sellStopT)
+                    ulong buyT, long buyType, ulong sellT, long sellType)
   {
    if(!PositionSelectByTicket(posTicket))
       return;
 
+   if(InpEntryMode == MODE_BREAKOUT)
+      ManageBreakout(posTicket, tick, D, buyT, sellT);
+   else
+      ManageReverse(posTicket, tick, D, buyT, buyType, sellT, sellType);
+  }
+
+//+------------------------------------------------------------------+
+//| BREAKOUT: trail the reversal stop order + the position SL        |
+//+------------------------------------------------------------------+
+void ManageBreakout(ulong posTicket, const MqlTick &tick, double D,
+                    ulong buyStopT, ulong sellStopT)
+  {
    long   type  = PositionGetInteger(POSITION_TYPE);
    double vol   = PositionGetDouble(POSITION_VOLUME);
    double entry = PositionGetDouble(POSITION_PRICE_OPEN);
    double curSL = PositionGetDouble(POSITION_SL);
    double curTP = PositionGetDouble(POSITION_TP);
 
-   // reversal is always the same volume as the position: together with the
-   // position SL at the same level this flips on hedging accounts and can
-   // never end up oversized on netting accounts
+   // reversal is same volume as the position: with the position SL at the same
+   // level this flips on hedging accounts and never oversizes on netting ones
    double revVol = vol;
    double step   = InpTrailStepPts * _Point;
 
@@ -479,7 +536,7 @@ void ManagePosition(ulong posTicket, const MqlTick &tick, double D,
       else if(OrderSelect(sellStopT))
         {
          double op = OrderGetDouble(ORDER_PRICE_OPEN);
-         if(level > op + step)               // trail up only
+         if(level > op + step)                // trail up only
             g_trade.OrderModify(sellStopT, level, revSL, revTP, ORDER_TIME_GTC, 0);
         }
 
@@ -505,7 +562,7 @@ void ManagePosition(ulong posTicket, const MqlTick &tick, double D,
       else if(OrderSelect(buyStopT))
         {
          double op = OrderGetDouble(ORDER_PRICE_OPEN);
-         if(level < op - step)               // trail down only
+         if(level < op - step)                // trail down only
             g_trade.OrderModify(buyStopT, level, revSL, revTP, ORDER_TIME_GTC, 0);
         }
 
@@ -516,6 +573,64 @@ void ManagePosition(ulong posTicket, const MqlTick &tick, double D,
                     : ((InpRewardMultiple > 0.0) ? RoundPrice(entry - D * InpRewardMultiple) : 0.0);
       if(MathAbs(newSL - curSL) > _Point * 0.5 || MathAbs(wantTP - curTP) > _Point * 0.5)
          g_trade.PositionModify(posTicket, newSL, wantTP);
+     }
+  }
+
+//+------------------------------------------------------------------+
+//| REVERSE: fixed +/-D bracket, stop doubles as the reversal        |
+//|  - long : TP entry+D, SL/reverse SELL STOP at entry-D             |
+//|  - short: TP entry-D, SL/reverse BUY  STOP at entry+D             |
+//| No trailing: every trade risks exactly one D, then flips.         |
+//+------------------------------------------------------------------+
+void ManageReverse(ulong posTicket, const MqlTick &tick, double D,
+                   ulong buyT, long buyType, ulong sellT, long sellType)
+  {
+   long   type  = PositionGetInteger(POSITION_TYPE);
+   double vol   = PositionGetDouble(POSITION_VOLUME);
+   double entry = PositionGetDouble(POSITION_PRICE_OPEN);
+   double curSL = PositionGetDouble(POSITION_SL);
+   double curTP = PositionGetDouble(POSITION_TP);
+   double revVol = vol;
+
+   // drop any stale entry limits still resting on either side
+   if(buyType == ORDER_TYPE_BUY_LIMIT && buyT != 0)
+     {
+      g_trade.OrderDelete(buyT);
+      buyT = 0; buyType = -1;
+     }
+   if(sellType == ORDER_TYPE_SELL_LIMIT && sellT != 0)
+     {
+      g_trade.OrderDelete(sellT);
+      sellT = 0; sellType = -1;
+     }
+
+   if(type == POSITION_TYPE_BUY)
+     {
+      double level = RoundPrice(entry - D);            // stop + reversal, fixed
+      double revSL = RoundPrice(entry);                // reversed short's stop (level + D)
+      double revTP = RoundPrice(entry - 2.0 * D);      // reversed short's target
+
+      if(sellT == 0 || sellType != ORDER_TYPE_SELL_STOP)
+         g_trade.SellStop(revVol, level, _Symbol, revSL, revTP, ORDER_TIME_GTC, 0, "reverse");
+
+      double wantSL = level;
+      double wantTP = RoundPrice(entry + D);
+      if(MathAbs(wantSL - curSL) > _Point * 0.5 || MathAbs(wantTP - curTP) > _Point * 0.5)
+         g_trade.PositionModify(posTicket, wantSL, wantTP);
+     }
+   else if(type == POSITION_TYPE_SELL)
+     {
+      double level = RoundPrice(entry + D);            // stop + reversal, fixed
+      double revSL = RoundPrice(entry);                // reversed long's stop (level - D)
+      double revTP = RoundPrice(entry + 2.0 * D);      // reversed long's target
+
+      if(buyT == 0 || buyType != ORDER_TYPE_BUY_STOP)
+         g_trade.BuyStop(revVol, level, _Symbol, revSL, revTP, ORDER_TIME_GTC, 0, "reverse");
+
+      double wantSL = level;
+      double wantTP = RoundPrice(entry - D);
+      if(MathAbs(wantSL - curSL) > _Point * 0.5 || MathAbs(wantTP - curTP) > _Point * 0.5)
+         g_trade.PositionModify(posTicket, wantSL, wantTP);
      }
   }
 //+------------------------------------------------------------------+

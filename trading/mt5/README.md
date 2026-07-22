@@ -11,8 +11,21 @@ volume never escalates).
 | File | Purpose |
 |---|---|
 | `GoldStraddleScalper.mq5` | The Expert Advisor (this is what MT5 backtests) |
-| `GoldStraddleScalper.set` | Tuned inputs: small account, tight loss control |
+| `GoldStraddleScalper.set` | Breakout preset (video-faithful) |
+| `GoldStraddleScalper.reverse.set` | Reverse preset (entries & SL interchanged / fade) |
 | `GoldStraddleScalper.backtest.xml` | Reference of the exact tester configuration |
+
+## Entry modes (input `InpEntryMode`)
+
+| Mode | Value | Behaviour |
+|---|---|---|
+| **Breakout** | `0` | Buy the break up / sell the break down; the opposite stop **trails** behind price as combined stop-loss + reversal. Trend-following — the strategy in the reference video. |
+| **Reverse** | `1` | Buy the dip / sell the rally — you enter where the breakout build would have stopped out (**entries and SL interchanged**). Fixed **+D** take-profit, hard **-D** stop, and the stop doubles as the reversal. Mean-reversion / fade. |
+
+Both modes cap every trade's loss at one distance `D`; neither holds a losing
+trade or scales volume. Load `GoldStraddleScalper.set` for breakout or
+`GoldStraddleScalper.reverse.set` for the interchanged version, and compare the
+two backtests on the same period.
 
 ## Backtest steps
 

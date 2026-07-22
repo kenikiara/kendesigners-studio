@@ -1,7 +1,9 @@
 ; GoldStraddleScalper v1.10
-; Preset: XAUUSD M1 - BREAKOUT (video-faithful), small account, tight loss control
-; Load in MT5 Strategy Tester / EA inputs via "Load" button
-InpEntryMode=0
+; Preset: XAUUSD M1 - REVERSE (entries & SL interchanged / mean-reversion fade)
+; Buy the dip, sell the rally. Fixed +D take-profit, hard -D stop, stop doubles
+; as the reversal. Each trade still risks exactly one distance D.
+; Load in MT5 Strategy Tester / EA inputs via "Load" button.
+InpEntryMode=1
 InpMagic=418418
 InpFixedLots=0.0
 InpRiskPercent=0.5

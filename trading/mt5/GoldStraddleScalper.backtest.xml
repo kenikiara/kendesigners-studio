@@ -17,7 +17,8 @@
     <Period note="include both trending and ranging months">last 12 months minimum</Period>
     <ForwardTesting>1/3</ForwardTesting>
   </Tester>
-  <Inputs setFile="GoldStraddleScalper.set">
+  <Inputs setFile="GoldStraddleScalper.set (breakout) or GoldStraddleScalper.reverse.set (fade)">
+    <Input name="InpEntryMode" value="0" note="0 = breakout (video), 1 = reverse (entries &amp; SL interchanged)"/>
     <Input name="InpMagic" value="418418"/>
     <Input name="InpFixedLots" value="0.0" note="0 = risk-based sizing"/>
     <Input name="InpRiskPercent" value="0.5" note="% of balance risked per flip"/>
